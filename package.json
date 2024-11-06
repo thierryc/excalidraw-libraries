@@ -1,22 +1,38 @@
 {
-  "dependencies": {
-    "@excalidraw/prettier-config": "1.0.2",
-    "http-server": "^14.1.0",
-    "node-static": "0.7.11",
-    "prettier": "2.5.1"
-  },
+  "name": "excalidraw-libraries",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "license": "MIT",
   "prettier": "@excalidraw/prettier-config",
   "scripts": {
-    "start": "node index.js",
-    "dev": "http-server .",
-    "build": "yarn build:key && yarn format",
+    "dev": "vite",
+    "build": "tsc && vite build",
     "build:stats": "python3 stats.py",
     "build:key": "python3 key.py",
-    "format": "yarn format:prettier && yarn format:python",
-    "format:prettier": "prettier . --write",
-    "format:python": "black .",
-    "postinstall": "pip install --upgrade google-api-python-client oauth2client black",
+    "preview": "vite preview",
+    "lint": "eslint src --ext ts,tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "_postinstall": "pip install --upgrade google-api-python-client oauth2client black",
     "validate:libraries": "node ./scripts/validate-libraries.js"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@excalidraw/prettier-config": "1.0.2",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "prettier": "^3.1.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
   }
 }

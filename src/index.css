@@ -1,0 +1,316 @@
+/* Reset and base styles */
+:root {
+    --primary-color: #1a73e8;
+    --primary-hover: #1557b0;
+    --text-color: #1f1f1f;
+    --text-secondary: #5f6368;
+    --background-color: #ffffff;
+    --card-background: #ffffff;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --header-height: 60px;
+    --card-border-radius: 8px;
+    --transition-speed: 0.2s;
+  }
+  
+  .theme--dark {
+    --primary-color: #4d9fff;
+    --primary-hover: #6fb2ff;
+    --text-color: #e8eaed;
+    --text-secondary: #9aa0a6;
+    --background-color: #202124;
+    --card-background: #2d2d2d;
+    --border-color: #3c4043;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    transition: background-color var(--transition-speed) ease;
+  }
+  
+  /* Layout */
+  .app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--header-height);
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  main {
+    flex: 1;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
+  footer {
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+  }
+  
+  /* Search */
+  .search-container {
+    flex: 1;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  #search-input {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: all var(--transition-speed) ease;
+  }
+  
+  #search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+  }
+  
+  /* Theme Toggle */
+  .theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    color: var(--text-color);
+    transition: background-color var(--transition-speed) ease;
+  }
+  
+  .theme-toggle:hover {
+    background-color: var(--border-color);
+  }
+  
+  /* Sort Controls */
+  .sort-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .sort-controls a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all var(--transition-speed) ease;
+  }
+  
+  .sort-controls a:hover {
+    color: var(--primary-color);
+    background-color: var(--border-color);
+  }
+  
+  .sort-controls .option-selected {
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+  
+  /* Libraries Grid */
+  .libraries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  
+  /* Library Card */
+  .library {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+    transition: all var(--transition-speed) ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .library:hover {
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transform: translateY(-2px);
+  }
+  
+  .library h2 {
+    font-size: 20px;
+    margin: 0;
+    color: var(--text-color);
+  }
+  
+  .preview {
+    position: relative;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: var(--border-color);
+  }
+  
+  .preview img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--transition-speed) ease;
+  }
+  
+  .preview img.lazy {
+    opacity: 0;
+  }
+  
+  .description {
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  
+  .authors {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .authors a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .authors a:hover {
+    text-decoration: underline;
+  }
+  
+  .dates {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  
+  .downloads {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  
+  .actions {
+    margin-top: auto;
+  }
+  
+  .install-library {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color var(--transition-speed) ease;
+  }
+  
+  .install-library:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    header {
+      flex-direction: column;
+      height: auto;
+      padding: 12px;
+      gap: 12px;
+    }
+  
+    .search-container {
+      width: 100%;
+    }
+  
+    .sort-controls {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .libraries-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .library {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Utility Classes */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  /* Print Styles */
+  @media print {
+    header {
+      position: static;
+    }
+  
+    .install-library,
+    .theme-toggle,
+    .sort-controls {
+      display: none;
+    }
+  
+    .library {
+      break-inside: avoid;
+      border: 1px solid #000;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+  }
