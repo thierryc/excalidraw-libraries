@@ -6,57 +6,25 @@ const sortByDate = (property: keyof Library) => (a: Library, b: Library) => {
   const today = new Date();
   const diffA = today.getTime() - aTime.getTime();
   const diffB = today.getTime() - bTime.getTime();
-  return diffB - diffA;
+  return diffA - diffB; // Inverse the order
 };
 
 export const sortBy: SortOptions = {
   default: {
     label: "Default",
-    func: (items) => {
-      const sortedByNewAsc = sortBy.new.func(items);
-      const TWO_WEEKS = 12096e5;
-      const timeTwoWeeksAgo = new Date(Date.now() - TWO_WEEKS);
-
-      const indexOfItemOlderThan2WeeksAsc =
-        sortedByNewAsc.length -
-        sortedByNewAsc
-          .slice()
-          .reverse()
-          .findIndex((x) => new Date(x.created) <= timeTwoWeeksAgo);
-
-      const topNewItemsAsc = sortedByNewAsc.slice(indexOfItemOlderThan2WeeksAsc);
-      const downloadPerWeekAsc = sortBy.downloadsWeek.func(
-        sortedByNewAsc.slice(0, indexOfItemOlderThan2WeeksAsc)
-      );
-
-      return downloadPerWeekAsc.concat(topNewItemsAsc);
-    },
+    func: (items) => items.sort((a, b) => a.name.localeCompare(b.name)),
   },
   new: {
     label: "New",
     func: (items) => items.sort(sortByDate("created")),
   },
-  updates: {
-    label: "Updated",
-    func: (items) => items.sort(sortByDate("updated")),
-  },
-  downloadsTotal: {
-    label: "Total Downloads",
-    func: (items) =>
-      items.sort((a, b) => a.downloads.total - b.downloads.total),
-  },
-  downloadsWeek: {
-    label: "Downloads This Week",
-    func: (items) =>
-      items.sort((a, b) => a.downloads.week - b.downloads.week),
-  },
   author: {
     label: "Author",
     func: (items) =>
-      items.sort((a, b) => b.authors[0].name.localeCompare(a.authors[0].name)),
+      items.sort((a, b) => a.authors[0].name.localeCompare(b.authors[0].name)), // Inverse the order
   },
   name: {
     label: "Name",
-    func: (items) => items.sort((a, b) => b.name.localeCompare(a.name)),
+    func: (items) => items.sort((a, b) => a.name.localeCompare(b.name)),
   },
 };

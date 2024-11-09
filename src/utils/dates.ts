@@ -63,16 +63,16 @@ export const MONTHS = [
       label: "Updated",
       func: (items) => items.sort(sortByDate("updated")),
     },
-    downloadsTotal: {
-      label: "Total Downloads",
-      func: (items) =>
-        items.sort((a, b) => a.downloads.total - b.downloads.total),
-    },
-    downloadsWeek: {
-      label: "Downloads This Week",
-      func: (items) =>
-        items.sort((a, b) => a.downloads.week - b.downloads.week),
-    },
+    // downloadsTotal: {
+    //   label: "Total Downloads",
+    //   func: (items) =>
+    //     items.sort((a, b) => a.downloads.total - b.downloads.total),
+    // },
+    // downloadsWeek: {
+    //   label: "Downloads This Week",
+    //   func: (items) =>
+    //     items.sort((a, b) => a.downloads.week - b.downloads.week),
+    // },
     author: {
       label: "Author",
       func: (items) =>

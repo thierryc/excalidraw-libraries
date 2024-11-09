@@ -4,36 +4,34 @@ import { sortBy } from './utils/sorting';
 import { LibraryCard } from './components/LibraryCard';
 import { SortControls } from './components/SortControls';
 import useFuzzySearch from './hooks/useFuzzySearch';
-
-
+import useSelectOnKeyPress from './hooks/useSelectOnKeyPress';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 
 const App: React.FC = () => {
+
+  const searchInput = useRef<HTMLInputElement>(null);
   const [libraries, setLibraries] = useState<Library[]>([]);
-  const [stats, setStats] = useState<Stats>({});
+  const [stats] = useState<Stats>({});
   const [currentSort, setCurrentSort] = useState<string>('default');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const {
-    filterQuery,
-    filteredLibraries,
-    setFilterQuery,
-    resetSearch
-  } = useFuzzySearch(libraries, {
-    debounceMs: 300,
-    threshold: 0.4
-  });
-
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const librariesReader = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
   const decoder = useRef(new TextDecoder());
   const buffer = useRef('');
+  const { query, searchResults, handleSearch, numberOfResults } = useFuzzySearch(libraries, {
+    debounceMs: 300
+  });
 
+  useSelectOnKeyPress(searchInput, 'Enter');
 
   const processLibrary = useCallback((library: Omit<Library, 'id' | 'downloads'>) => {
-    const replaceText = { '/': '-', '.excalidrawlib': '' };
+    const replaceText: Record<string, string> = { '/': '-', '.excalidrawlib': '' };
     const libraryId = library.source
       .toLowerCase()
       .replace(/\/|.excalidrawlib/g, (match) => replaceText[match as keyof typeof replaceText]);
@@ -48,7 +46,7 @@ const App: React.FC = () => {
     };
   }, [stats]);
 
-  const processJSONLChunk = async (reader: ReadableStreamDefaultReader<Uint8Array>, processLine: (line: any) => void) => {
+  const processJSONLChunk = async (reader: ReadableStreamDefaultReader<Uint8Array>, processLine: (line: Library) => void) => {
     try {
       const { value, done } = await reader.read();
       if (done) {
@@ -154,6 +152,22 @@ const App: React.FC = () => {
     };
   }, [loadMoreData]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 76) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+
   const handleSort = (sortType: string) => {
     setCurrentSort(sortType);
     setLibraries(sortBy[sortType].func([...libraries]));
@@ -185,21 +199,24 @@ const App: React.FC = () => {
 
   return (
     <div className={`app ${theme}`}>
-      <header>
+      <header ref={headerRef} className={`${isScrolled ? 'scrolled' : ''}`}>
         <div className="search-container">
           <input
             type="text"
+            ref={searchInput}
             id="search-input"
             placeholder="Search libraries..."
-            value={filterQuery}
-            onChange={(e) => setFilterQuery(e.target.value)}
+            value={query}
+            onChange={(e) => handleSearch(e.target.value)}
+            className={`search-input ${(numberOfResults === 0 && query.length > 1) ? 'error' : ''}`}
           />
-          <button
-            onClick={resetSearch}
-            className="ml-2 p-2 bg-gray-200 rounded"
-          >
-            Clear
-          </button>
+          {(numberOfResults === 0 && query.length > 1) ? (
+            <p className='error-message'>
+              No results found. Please try a different search query.
+            </p>
+          ) : (
+            <p className='tips'> tip: you can type "Enter" anywhere to start searching</p>
+          )}
         </div>
         <button onClick={toggleTheme}>
           {theme === 'light' ? '🌙' : '☀️'}
@@ -208,19 +225,27 @@ const App: React.FC = () => {
       </header>
 
       <main>
-        <div className="libraries-grid">
-          {filteredLibraries.map((library) => (
-            <LibraryCard
-              key={library.id}
-              library={library}
-              referrer={referrer}
-              target={target}
-              appName={appName}
-              csrfToken={csrfToken || undefined}
-              useHash={useHash}
-            />
+        <TransitionGroup className="libraries-grid">
+          {searchResults.map((library) => (
+            <CSSTransition
+              key={`T${library.id}`}
+              timeout={300}
+              classNames="fade"
+              onEnter={() => console.log('Enter')}
+              onExited={() => console.log('Exited')}
+            >
+              <LibraryCard
+                key={library.id}
+                library={library}
+                referrer={referrer}
+                target={target}
+                appName={appName}
+                csrfToken={csrfToken || undefined}
+                useHash={useHash}
+              />
+            </CSSTransition>
           ))}
-        </div>
+        </TransitionGroup>
         <div ref={loadingRef} className="loading-indicator">
           {isLoading && <p>Loading more libraries...</p>}
           {!hasMore && <p>No more libraries to load</p>}
@@ -228,7 +253,7 @@ const App: React.FC = () => {
       </main>
 
       <footer>
-        <p>© {new Date().getFullYear()} Excalidraw Libraries</p>
+        <p>All the libraries are under MIT License.</p>
       </footer>
     </div>
   );
