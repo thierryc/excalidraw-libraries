@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Library } from '../types';
 import { formatDate } from '../utils/dates';
 
@@ -19,34 +19,78 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
   csrfToken,
   useHash
 }) => {
+  const imgRef = useRef<HTMLImageElement>(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && imgRef.current) {
+            const img = imgRef.current;
+            const dataSrc = img.getAttribute('data-src');
+            
+            if (dataSrc) {
+              img.src = dataSrc;
+              img.classList.remove('lazy');
+              img.classList.add('loaded');
+              observer.unobserve(img);
+            }
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '50px',
+        threshold: 0.1
+      }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => {
+      if (imgRef.current) {
+        observer.unobserve(imgRef.current);
+      }
+    };
+  }, []);
+
   const origin = window.location.origin;
-  const libraryUrl = encodeURIComponent(`${origin}/libraries/${library.source}`);
+  const downlaodLib = `${origin}/libraries/${library.source}`;
+  const libraryUrl = encodeURIComponent(downlaodLib);
   const addToLibUrl = `${referrer}${useHash ? '#' : '?'}addLibrary=${libraryUrl}${
     csrfToken ? `&token=${csrfToken}` : ''
   }`;
+
+  
 
   return (
     <div className="library" id={library.id} data-version={library.version || '1'}>
       <h2>{library.name}</h2>
       <div className="preview">
         <img
+          ref={imgRef}
           className="lazy"
           data-src={`libraries/${library.preview}?v=${library.updated}`}
           alt={`Preview of ${library.name}`}
+          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" // Transparent placeholder
         />
       </div>
       <div className="description">
         <p>{library.description}</p>
+
         {library.itemNames && (
-          <p>
-            <b>Items: </b>
+          <p className='itemNames'>
+            <b>{`${library.itemNames.length}`} Items: </b>
             <span className="itemNames">
-              {library.itemNames.length > 300
-                ? library.itemNames.slice(0, 300).join(', ') + '...'
+              {library.itemNames.length > 24
+                ? library.itemNames.slice(0, 24).join(', ') + '…'
                 : library.itemNames.join(', ')}
             </span>
           </p>
         )}
+        
       </div>
       <div className="authors">
         {library.authors.map((author) => (
@@ -61,9 +105,6 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
           <p className="updated">Updated: {formatDate(library.updated)}</p>
         )}
       </div>
-      <div className="downloads">
-        <p>Downloads: {library.downloads.total} (This week: {library.downloads.week})</p>
-      </div>
       <div className="actions">
         <a
           href={addToLibUrl}
@@ -73,7 +114,14 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({
         >
           Add to {appName}
         </a>
+        <a 
+          href={downlaodLib} 
+          download={library.source}
+          className="download-library" 
+        >Download Library</a>
       </div>
     </div>
   );
 };
+
+export default LibraryCard;
