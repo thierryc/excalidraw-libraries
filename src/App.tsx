@@ -215,7 +215,7 @@ const App: React.FC = () => {
               No results found. Please try a different search query.
             </p>
           ) : (
-            <p className='tips'> tip: you can type "Enter" anywhere to start searching</p>
+            <p className='tips'></p>
           )}
         </div>
         <button onClick={toggleTheme}>
@@ -223,8 +223,19 @@ const App: React.FC = () => {
         </button>
         <SortControls currentSort={currentSort} onSort={handleSort} />
       </header>
-
       <main>
+        <div className="hero">
+          <h1 className="hero-title">
+            <strong>Excalidraw</strong> Libraries
+          </h1>
+          <h2 className="hero-subtitle">
+            {numberOfResults > 0 ? `${numberOfResults} results found` : `${searchResults.length} Libraries`}
+          </h2>
+          <h3>A directory of public libraries that you can easily add to Excalidraw.</h3>
+          <p>Follow the instructions if you want to add your own library into this list.</p>
+          <p>All the following libraries are under MIT License.</p>
+          <p className='tips'>tip: you can type "Enter" anywhere to start searching</p>
+        </div>
         <TransitionGroup className="libraries-grid">
           {searchResults.map((library) => (
             <CSSTransition

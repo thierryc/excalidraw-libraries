@@ -250,6 +250,21 @@ footer {
   color: var(--text-secondary);
 }
 
+.hero {
+  margin: 0 auto;
+  width: 80%;
+  max-width: var(--max-width);
+  padding: 20px;
+  text-align: center;
+}
+
+/* type scale */
+
+h1 {
+  font-size: 3.5rem;
+}
+
+
 /* Search */
 .search-container {
   flex: 1;
@@ -547,7 +562,7 @@ footer {
 
 /* highlight Libraries words */
 .highlight {
-  background-color: #ffeb3b;
+  background-color: var(--green-low);
   padding: 0 2px;
   border-radius: 2px;
 }

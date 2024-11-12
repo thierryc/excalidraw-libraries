@@ -12,7 +12,7 @@ const sortByDate = (property: keyof Library) => (a: Library, b: Library) => {
 export const sortBy: SortOptions = {
   default: {
     label: "Default",
-    func: (items) => items.sort((a, b) => a.name.localeCompare(b.name)),
+    func: (items) => items.sort(sortByDate("created")),
   },
   new: {
     label: "New",
